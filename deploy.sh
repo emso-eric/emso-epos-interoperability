@@ -1,9 +1,7 @@
 #!/bin/bash
+set -o errexit
 
 tag="geoi"
-
-set -o errexit
-set -o nounset
 
 cpath=$(pwd)  # get current path
 

@@ -74,7 +74,7 @@ def get_dataset_metadata(erddap_url: str, dataset_id) -> pd.DataFrame:
 
 
 def ttl_from_erddap(df, dataset_id, converter_url, folder):
-    ttl_file = os.path.join("conf", dataset_id  + ".ttl")
+    ttl_file = os.path.join(folder, dataset_id  + ".ttl")
     institution = df.loc[df["Attribute Name"] == "institution"]["Value"].values[0]
     title = df.loc[df["Attribute Name"] == "title"]["Value"].values[0]
     description = df.loc[df["Attribute Name"] == "summary"]["Value"].values[0]
@@ -252,60 +252,7 @@ def ttl_from_erddap(df, dataset_id, converter_url, folder):
         
     ];
 .
-
     """
-    #
-    # erddap_to_ttl_types = {
-    #     "double": "xsd:float",
-    #     "uint": "xsd:integer",
-    #     "float": "xsd:float"
-    # }
-    #
-    #
-    #
-    # ignore = ["latitude", "longitude", "NC_GLOBAL", "time"]
-    # variables = df["Variable Name"].unique()
-    # variables = [v for v in variables if not v.upper().endswith("_QC") and v not in ignore]
-    # rich.print(f"[orange3]Processing variables: {variables}")
-    # for var in variables:
-    #     dfv = df.loc[df["Variable Name"] == var]
-    #
-    #     dtype = erddap_to_ttl_types[dfv[dfv["Attribute Name"] == "_FillValue"]["Data Type"].values[0]]
-    #     rich.print(dfv)
-    #     erddap_dtype = dfv.loc[ dfv["Attribute Name"] == "_FillValue"]["Data Type"].values[0]
-    #     dtype = erddap_to_ttl_types[erddap_dtype]
-    #     data_range =  dfv.loc[ dfv["Attribute Name"] == "actual_range"]["Value"].values[0]
-    #
-    #     if dtype  in ["xsd:float", "xsd:integer"]:
-    #         data_min = float(data_range.split(", ")[0])
-    #         data_max = float(data_range.split(", ")[1])
-    #         rich.print(f"Variable '{var}' range: {data_min} <-> {data_max}")
-    #     else:
-    #         raise ValueError(f"Can't process dtype for {var}")
-    #
-    #
-    #     variable = f"""
-    #             #--- Variable {var}
-    #             hydra:mapping[ a hydra:IriTemplateMapping;
-    #                  hydra:variable "SPL_ALL>"^^xsd:string;
-    #                  rdfs:range "{dtype}";
-    #                  rdfs:label "None_min value";
-    #                  schema:minValue "95.8218";
-    #                  schema:defaultValue "95.8218";
-    #                  hydra:required "false"^^xsd:boolean;
-    #                ];
-    #             hydra:mapping[ a hydra:IriTemplateMapping;
-    #                  hydra:variable "SPL_ALL<"^^xsd:string;
-    #                  rdfs:range "{dtype}";
-    #                  rdfs:label "None_max value";
-    #                  schema:maxValue "126.0272";
-    #                  schema:defaultValue "126.0272";
-    #                  hydra:required "false"^^xsd:boolean;
-    #                ];
-    #     """
-    #
-    #     input()
-
 
     with open(ttl_file, "w") as f:
         f.write(contents)
@@ -320,8 +267,6 @@ if __name__ == "__main__":
 
 
     url = "https://erddap.emso.eu/erddap"
-    # converter_url = "https://plomefiles.obsea.es/geo2coverage/v1.0"
-    converter_url = "http://172.17.0.1:5000/geo2coverage/v1.0"
     datasets = get_erddap_metadata(url)
 
     processed = 0
@@ -338,7 +283,7 @@ if __name__ == "__main__":
         df = get_dataset_metadata(url, dataset_id)
 
         try:
-            ttl_from_erddap(df, dataset_id, converter_url, args.output)
+            ttl_from_erddap(df, dataset_id, args.url, args.output)
             rich.print(f"[green]success")
         except IndexError or ValueError or KeyError as e:
             rich.print(f"[red]Error processing {dataset_id}: {e.__repr__()}")

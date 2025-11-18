@@ -128,7 +128,6 @@ class ErddapDownloader():
         columns = meta["table"]["columnNames"]
         rows = meta["table"]["rows"]
         meta = pd.DataFrame(rows, columns=columns)
-        print(meta)
         get_data_msecs = 1000*(time.time() - t)
 
 
