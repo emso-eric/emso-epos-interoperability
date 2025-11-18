@@ -1,0 +1,57 @@
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix epos: <https://www.epos-eu.org/epos-dcat-ap#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix hydra: <http://www.w3.org/ns/hydra/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+@prefix locn: <http://www.w3.org/ns/locn#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix http: <http://www.w3.org/2006/http#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix gsp: <http://www.opengis.net/ont/geosparql#> .
+@prefix dqv: <http://www.w3.org/ns/dqv#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix foaf: <http://xmlns.com/foaf/spec/#term_> .
+
+
+
+
+#########
+# EMSO Top Concept Scheme
+#########
+#<category:facets/EMSO-theme> a skos:Concept ;
+#       skos:definition  "EMSO-Dataset" ;
+#       skos:prefLabel   "EMSO-Dataset"
+# .
+
+
+#########
+# EMSO Concept Scheme
+#########
+
+<category:EMSO> a skos:ConceptScheme ;
+       skos:prefLabel "EMSO" ;
+       dct:title "EMSO" ;
+       dct:description "EMSO Domain" ;
+       foaf:logo "https://emso.eu/wp-content/uploads/2018/04/emso-logo2-400x270.jpg" ;
+       #foaf:homepage "" ;
+       schema:color "#9261b7";
+       schema:orderItemNumber "12";
+       skos:hasTopConcept <category:facets/dataset-theme> ;
+ .
+
+#########
+# Concepts
+#########
+
+<category:EMSO_conc> a skos:Concept ;
+        skos:inScheme    <category:EMSO> ;
+        skos:definition  "EMSO categories" ;
+        skos:prefLabel   "EMSO categories"
+ .
