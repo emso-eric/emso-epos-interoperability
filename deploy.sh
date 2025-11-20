@@ -16,8 +16,6 @@ else
   epos-opensource docker deploy ${tag}
 fi
 
-echo "=== Copy EMSO facets"
-cp "0_facets-EMSO.ttl" "conf"
 echo "=== Populating environment ${tag}"
 epos-opensource docker populate ${tag} "${cpath}/conf"
 
@@ -29,3 +27,5 @@ while [ ${#n} -lt 1 ]; do
   n=$(docker ps | grep ${tag}-resources-service | grep healthy)
   sleep 1
 done
+
+docker cp emso-eric-logo.svg ${tag}-data-portal:/opt/epos-gui/assets/img/logo/logo-white.svg

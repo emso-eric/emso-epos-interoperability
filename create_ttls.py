@@ -1,6 +1,4 @@
 from argparse import ArgumentParser
-from email.policy import default
-
 import rich
 import os
 import requests
@@ -73,6 +71,59 @@ def get_dataset_metadata(erddap_url: str, dataset_id) -> pd.DataFrame:
     return df
 
 
+rf_index = 0
+def rf_ttl(rf_name, rf_description, folder):
+    ttl_file = os.path.join(folder, f"0_{rf_name}.ttl")
+    if os.path.exists(ttl_file):
+        return
+    global rf_index
+    rf_index += 1
+    contents = f"""
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix epos: <https://www.epos-eu.org/epos-dcat-ap#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix hydra: <http://www.w3.org/ns/hydra/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <http://schema.org/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+@prefix locn: <http://www.w3.org/ns/locn#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix http: <http://www.w3.org/2006/http#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix gsp: <http://www.opengis.net/ont/geosparql#> .
+@prefix dqv: <http://www.w3.org/ns/dqv#> .
+@prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix foaf: <http://xmlns.com/foaf/spec/#term_> .
+
+<category:{rf_name}> a skos:ConceptScheme ;
+       skos:prefLabel "{rf_name}" ;
+       dct:title "{rf_name}" ;
+       dct:description "{rf_description}" ;
+       foaf:logo "https://emso.eu/wp-content/uploads/2018/04/emso-logo2-400x270.jpg" ;
+       #foaf:homepage "" ;
+       schema:color "#9261b7";
+       schema:orderItemNumber "{rf_index}";
+       skos:hasTopConcept <category:facets/dataset-theme> ;
+ .
+
+<category:{rf_name}_conc> a skos:Concept ;
+        skos:inScheme    <category:{rf_name}> ;
+        skos:definition  "{rf_name} categories" ;
+        skos:prefLabel   "{rf_name} categories"
+ .
+
+"""
+    ttl_file = os.path.join(folder, f"0_{rf_name}.ttl")
+
+    with open(ttl_file, "w") as f:
+        f.write(contents)
+
+
 def ttl_from_erddap(df, dataset_id, converter_url, folder):
     ttl_file = os.path.join(folder, dataset_id  + ".ttl")
     institution = df.loc[df["Attribute Name"] == "institution"]["Value"].values[0]
@@ -83,6 +134,20 @@ def ttl_from_erddap(df, dataset_id, converter_url, folder):
     start_time = df.loc[df["Attribute Name"] == "time_coverage_start"]["Value"].values[0]
     lat = df.loc[df["Attribute Name"] == "geospatial_lat_max"]["Value"].values[0]
     lon = df.loc[df["Attribute Name"] == "geospatial_lon_max"]["Value"].values[0]
+
+    try:
+        rf_name = df.loc[df["Attribute Name"] == "emso_facility"]["Value"].values[0]
+    except Exception as e:
+        # trying to guess manually the RF
+        if "azores" in dataset_id.lower():
+            rf_name = "AZORES"
+        elif "smartbay" in dataset_id.lower():
+            rf_name = "SmartBay"
+        else:
+            raise e
+
+    rf_name = rf_name.replace(" ", "_")
+    rf_ttl(rf_name, f"{rf_name} EMSO regional racility", folder)
 
     if not title:
         rich.print(f"[red]No title for {dataset_id}")
@@ -176,7 +241,7 @@ def ttl_from_erddap(df, dataset_id, converter_url, folder):
    locn:geometry "POINT({lon} {lat})"^^gsp:wktLiteral;
   ];
   dct:title "{title}";
-  dcat:theme  <category:EMSO_conc> ;
+  dcat:theme  <category:{rf_name}_conc> ;
   dct:type "http://purl.org/dc/dcmitype/Collection"^^xsd:anyURI ;
   dcat:distribution <{dataset_id}_distribution_COVJSON>;
 #doi not found
