@@ -326,13 +326,14 @@ def ttl_from_erddap(df, dataset_id, converter_url, folder):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--url", help="converter url", default="http://172.17.0.1:5000/geo2coverage/v1.0")
+    parser.add_argument("-e", "--erddap", help="ERDDAP URL", default="https://erddap.emso.eu/erddap")
     parser.add_argument("--limit", help="limit", default=1000, type=int)
     parser.add_argument("--output", help="Output folder", type=str, default="conf")
     args = parser.parse_args()
 
 
     url = "https://erddap.emso.eu/erddap"
-    datasets = get_erddap_metadata(url)
+    datasets = get_erddap_metadata(args.erddap)
 
     processed = 0
     os.makedirs(args.output, exist_ok=True)

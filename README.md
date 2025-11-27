@@ -8,7 +8,7 @@ This repository provides all necessary tools to retrieve EMSO data, transform it
 
 ## Overview
 
-EMSO data is distributed through a **federation of ERDDAP servers**, each providing access to heterogeneous ocean observatory data. While ERDDAP can return data in multiple formats, its **GeoJSON** output is not optimal for rendering within the EPOS data platform.
+EMSO data is distributed through the [EMSO ERIC ERDDAP federation](https://erddap.emso.eu), providing access to heterogeneous ocean observatory data. While ERDDAP can return data in multiple formats, its **GeoJSON** output is not  optimal for rendering within the EPOS data platform.
 
 To address this, the project includes a **protocol adapter** that converts ERDDAP GeoJSON into **CovJSON (CoverageJSON)**, a lightweight and efficient standard for spatio-temporal coverage data, widely supported across EPOS visualization components.
 
@@ -58,3 +58,16 @@ python3 create_ttls.py
 ``` 
 
 Done! the data portal with EMSO data should be available at http://localhost:3200
+
+
+### Customization ### 
+To change the logo, overwrite the `logo`
+
+docker cp emso-eric-logo.svg ${tag}-data-portal:/opt/epos-gui/assets/img/logo/logo-white.svg
+docker cp emso-eric-logo.ico ${tag}-data-portal:/opt/epos-gui/assets/img/favicon/favicon.ico
+
+### Contact info ###
+
+* **author**: Enoc Martínez  
+* **organization**: Universitat Politècnica de Catalunya (UPC)    
+* **contact**: enoc.martinez@upc.edu  
